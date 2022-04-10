@@ -1,4 +1,6 @@
-import { valida } from './js/validacao.js'
+/*jshint esversion: 6 */
+
+import { valida } from './validacao.js'
 
 const inputs = document.querySelectorAll('input')
 

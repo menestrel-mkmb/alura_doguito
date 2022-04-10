@@ -1,7 +1,5 @@
 /*jshint esversion: 6 */
 
-const dataNascimento = document.querySelector('#nascimento');
-
 const validadores = {
     dataNascimento:input => validaDataNascimento(input),
     cpf:input => validaCPF(input),
@@ -69,6 +67,10 @@ export function valida(input){
     }
 }
 
+/*
+ * CONSULTA CEP / ViaCEP
+*/
+
 function returnErrorMessage(tipoInput, input){
     let mensagem = '';
 
@@ -80,9 +82,48 @@ function returnErrorMessage(tipoInput, input){
     return mensagem;
 }
 
-dataNascimento.addEventListener('blur',(event) => {
-    validaDataNascimento(event.target);
-});
+function verificaCEP(input){
+    const cepFormatado = input.value.replace(/\D/g, '');
+    const url = `https://viacep.com.br/ws/${cepFormatado}/json/`;
+    const options = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'content-type': 'application/json;charset=utf-8'
+        }
+    };
+
+    if(!input.validity.patternMismatch && !input.validity.valueMissing){
+        fetch(url, options).then(
+            response => response.json()
+        ).then(
+            data => {
+                if(data.erro){
+                    input.setCustomValidity('Erro na consulta do CEP');
+                    return;
+                }
+                input.setCustomValidity('');
+                return preencheEndereco(data);
+            }
+        );
+    }
+}
+
+function preencheEndereco(data){
+    const logradouro = document.querySelector('[data-tipo="logradouro"');
+    const cidade = document.querySelector('[data-tipo="cidade"');
+    const estado = document.querySelector('[data-tipo="estado"');
+    
+    logradouro.value = data.logradouro;
+    cidade.value = data.localidade;
+    estado.value = data.uf;
+
+    return;
+}
+
+/*
+ * DATA DE NASCIMENTO / MAIOR IDADE
+*/
 
 function validaDataNascimento(data){
     let mensagem = '';
@@ -101,6 +142,10 @@ function maiorIdade(data, threshold){
 
     return (dataAtual>=dataTeste);
 }
+
+/*
+ * VALIDADOR DE CPF
+*/
 
 function validaCPF(input){
     const cpfFormatado = input.value.replace(/\D/g, '');
@@ -166,43 +211,4 @@ function checaDigitoVerificador(cpfFormatado, multiplicador){
 function checaCPFValido(cpfFormatado){
     const multiplicador = 10;
     return checaDigitoVerificador(cpfFormatado, multiplicador); //AVOID_MAGIC_NUMBER
-}
-
-function verificaCEP(input){
-    const cepFormatado = input.value.replace(/\D/g, '');
-    const url = `https://viacep.com.br/ws/${cepFormatado}/json/`;
-    const options = {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'content-type': 'application/json;charset=utf-8'
-        }
-    };
-
-    if(!input.validity.patternMismatch && !input.validity.valueMissing){
-        fetch(url, options).then(
-            response => response.json()
-        ).then(
-            data => {
-                if(data.erro){
-                    input.setCustomValidity('Erro na consulta do CEP');
-                    return;
-                }
-                input.setCustomValidity('');
-                return preencheEndereco(data);
-            }
-        );
-    }
-}
-
-function preencheEndereco(data){
-    const logradouro = document.querySelector('[data-tipo="logradouro"');
-    const cidade = document.querySelector('[data-tipo="cidade"');
-    const estado = document.querySelector('[data-tipo="estado"');
-    
-    logradouro.value = data.logradouro;
-    cidade.value = data.localidade;
-    estado.value = data.uf;
-
-    return;
 }
