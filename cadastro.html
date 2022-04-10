@@ -63,22 +63,26 @@
                 <fieldset>
                     <legend class="formulario__legenda">Endereço</legend>
                     <div class="input-container">
-                        <input name="cep" id="cep" class="input" type="text" data-tipo="CEP" placeholder="CEP">
+                        <input name="cep" id="cep" class="input" type="text" data-tipo="cep"
+                            pattern="^[\d]{2}\.?[\d]{3}-?[\d]{3}$" placeholder="CEP" required>
                         <label class="input-label" for="cep">CEP</label>
                         <span class="input-mensagem-erro">Este campo não está válido</span>
                     </div>
                     <div class="input-container">
-                        <input name="logradouro" id="logradouro" class="input" type="text" placeholder="Logradouro">
+                        <input name="logradouro" id="logradouro" class="input" type="text" data-tipo="logradouro"
+                            placeholder="Logradouro" required>
                         <label class="input-label" for="logradouro">Logradouro</label>
                         <span class="input-mensagem-erro">Este campo não está válido</span>
                     </div>
                     <div class="input-container">
-                        <input name="cidade" id="cidade" class="input" type="text" placeholder="Cidade">
+                        <input name="cidade" id="cidade" class="input" type="text" data-tipo="cidade"
+                            placeholder="Cidade" required>
                         <label class="input-label" for="cidade">Cidade</label>
                         <span class="input-mensagem-erro">Este campo não está válido</span>
                     </div>
                     <div class="input-container">
-                        <input name="estado" id="estado" class="input" type="text" placeholder="Estado">
+                        <input name="estado" id="estado" class="input" type="text" data-tipo="estado"
+                            placeholder="Estado" required>
                         <label class="input-label" for="estado">Estado</label>
                         <span class="input-mensagem-erro">Este campo não está válido</span>
                     </div>

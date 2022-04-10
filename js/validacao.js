@@ -3,29 +3,43 @@ const dataNascimento = document.querySelector('#nascimento');
 const validadores = {
     dataNascimento:input => validaDataNascimento(input),
     cpf:input => validaCPF(input),
+    cep:input => verificaCEP(input),
 }
 
 const statusErrorMsg = {
     nome: {
-        valueMissing: `O campo nome não pode estar vazio`,
+        valueMissing: `O campo 'nome' não pode estar vazio`,
     },
     email: {
-        valueMissing: `O campo e-mail não pode estar vazio`,
+        valueMissing: `O campo 'e-mail' não pode estar vazio`,
         typeMismatch: `O e-mail deve ter um formato válido`,
     },
     senha: {
-        valueMissing: `O campo senha não pode estar vazio`,
+        valueMissing: `O campo 'senha' não pode estar vazio`,
         patternMismatch: `A senha deve conter entre 6 a 12 caracteres, deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e não pode conter símbolos`,
     },
     dataNascimento: {
-        valueMissing: `O campo data de nascimento não pode estar vazio`,
+        valueMissing: `O campo 'data de nascimento' não pode estar vazio`,
         customError: `Você deve ser maior de idade para se cadastrar`,
     },
     cpf: {
-        valueMissing: `O campo cpf não pode estar vazio`,
+        valueMissing: `O campo 'CPF' não pode estar vazio`,
         customError: `O CPF digitado é inválido`,
     },
-
+    cep: {
+        valueMissing: `O campo 'CEP' não pode estar vazio`,
+        patternMismatch: `Os formatos aceitos são 12345678, 12345-678 ou 12.345-678`,
+        customError: `Erro na consulta do CEP`,
+    },
+    logradouro: {
+        valueMissing: `O campo 'logradouro' não pode estar vazio`,
+    },
+    cidade: {
+        valueMissing: `O campo 'logradouro' não pode estar vazio`,
+    },
+    estado: {
+        valueMissing: `O campo 'logradouro' não pode estar vazio`,
+    },
 }
 
 const typeErrorMsg = [
@@ -147,4 +161,43 @@ function checaDigitoVerificador(cpfFormatado, multiplicador){
 function checaCPFValido(cpfFormatado){
     const multiplicador = 10;
     return checaDigitoVerificador(cpfFormatado, multiplicador); //AVOID_MAGIC_NUMBER
+}
+
+function verificaCEP(input){
+    const cepFormatado = input.value.replace(/\D/g, '');
+    const url = `https://viacep.com.br/ws/${cepFormatado}/json/`;
+    const options = {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'content-type': 'application/json;charset=utf-8'
+        }
+    }
+
+    if(!input.validity.patternMismatch && !input.validity.valueMissing){
+        fetch(url, options).then(
+            response => response.json()
+        ).then(
+            data => {
+                if(data.erro){
+                    input.setCustomValidity('Erro na consulta do CEP');
+                    return;
+                }
+                input.setCustomValidity('');
+                return preencheEndereco(data);
+            }
+        )
+    }
+}
+
+function preencheEndereco(data){
+    const logradouro = document.querySelector('[data-tipo="logradouro"');
+    const cidade = document.querySelector('[data-tipo="cidade"');
+    const estado = document.querySelector('[data-tipo="estado"');
+    
+    logradouro.value = data.logradouro;
+    cidade.value = data.localidade;
+    estado.value = data.uf;
+
+    return;
 }
