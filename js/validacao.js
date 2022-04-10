@@ -1,10 +1,12 @@
+/*jshint esversion: 6 */
+
 const dataNascimento = document.querySelector('#nascimento');
 
 const validadores = {
     dataNascimento:input => validaDataNascimento(input),
     cpf:input => validaCPF(input),
     cep:input => verificaCEP(input),
-}
+};
 
 const statusErrorMsg = {
     nome: {
@@ -35,19 +37,22 @@ const statusErrorMsg = {
         valueMissing: `O campo 'logradouro' não pode estar vazio`,
     },
     cidade: {
-        valueMissing: `O campo 'logradouro' não pode estar vazio`,
+        valueMissing: `O campo 'cidade' não pode estar vazio`,
     },
     estado: {
-        valueMissing: `O campo 'logradouro' não pode estar vazio`,
+        valueMissing: `O campo 'estado' não pode estar vazio`,
     },
-}
+    preco: {
+        valueMissing: `O campo 'preço' não pode estar vazio`,
+    },
+};
 
 const typeErrorMsg = [
     'valueMissing',
     'typeMismatch',
     'patternMismatch',
     'customError'
-]
+];
 
 export function valida(input){
     const tipoInput = input.dataset.tipo;
@@ -57,7 +62,7 @@ export function valida(input){
 
     if(input.validity.valid){
         input.parentElement.classList.remove('input-container--invalido');
-        input.parentElement.querySelector('.input-mensagem-erro').innerHTML = ''
+        input.parentElement.querySelector('.input-mensagem-erro').innerHTML = '';
     } else {
         input.parentElement.classList.add('input-container--invalido');
         input.parentElement.querySelector('.input-mensagem-erro').innerHTML = returnErrorMessage(tipoInput, input);
@@ -70,7 +75,7 @@ function returnErrorMessage(tipoInput, input){
     typeErrorMsg.forEach(erro => {
         if(input.validity[erro])
             mensagem = statusErrorMsg[tipoInput][erro];
-    })
+    });
 
     return mensagem;
 }
@@ -121,7 +126,7 @@ function checaCPFRepetido(cpfFormatado){
         '77777777777',
         '88888888888',
         '99999999999',
-    ]
+    ];
     let cpfValido = true;
     console.log(cpfFormatado);
 
@@ -129,7 +134,7 @@ function checaCPFRepetido(cpfFormatado){
         if(cpfFormatado == value){
             cpfValido = false;
         }
-    })
+    });
 
     return cpfValido;
 }
@@ -172,7 +177,7 @@ function verificaCEP(input){
         headers: {
             'content-type': 'application/json;charset=utf-8'
         }
-    }
+    };
 
     if(!input.validity.patternMismatch && !input.validity.valueMissing){
         fetch(url, options).then(
@@ -186,7 +191,7 @@ function verificaCEP(input){
                 input.setCustomValidity('');
                 return preencheEndereco(data);
             }
-        )
+        );
     }
 }
 
